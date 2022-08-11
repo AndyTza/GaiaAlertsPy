@@ -2,9 +2,9 @@
 
 # -- Project information
 
-project = 'Lumache'
-copyright = '2021, Graziella'
-author = 'Graziella'
+project = 'GaiaAlertsPy'
+copyright = '2022, Tzanidakis'
+author = 'Anastasios Tzanidakis'
 
 release = '0.1'
 version = '0.1.0'
