@@ -18,4 +18,4 @@ Contents
 
    usage
    started
-   api
+   citation
