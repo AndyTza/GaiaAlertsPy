@@ -25,7 +25,6 @@ class GaiaAlert:
         """
         TODO: Add docs
         """
-        # TODO: asses if file empty 
 
         try:
             _dat = pd.read_csv(f"http://gsaweb.ast.cam.ac.uk/alerts/alert/{self.id}/lightcurve.csv/", skiprows=1)
