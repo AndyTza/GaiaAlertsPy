@@ -21,6 +21,5 @@ Contents
 
    installation
    usage
-   citation
-
+   
 .. _Gaia: https://www.cosmos.esa.int/web/gaia/home
