@@ -20,5 +20,6 @@ Contents
    :caption: Contents:
 
    usage
+   getting-started
 
 .. _Gaia: https://www.cosmos.esa.int/web/gaia/home
