@@ -20,6 +20,7 @@ author = "Anastasios Tzanidakis"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
+    "sphinx_copybutton",
     "nbsphinx",
     "sphinx_automodapi.automodapi",
 ]

@@ -3,3 +3,4 @@ ipykernel
 nbsphinx
 sphinx_automodapi
 furo
+sphinx_copybutton
