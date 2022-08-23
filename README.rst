@@ -1,9 +1,8 @@
-Template for the Read the Docs tutorial
+GaiaAlertsPy
 =======================================
 
-This GitHub template includes fictional Python library
-with some basic Sphinx docs.
 
-Read the tutorial here:
+### Aknowledgements
+This repository was inspired by the use of original repository [GaiaAlerts](https://github.com/davidwhogg/GaiaAlerts) (Hogg et al.) and extending its application to the time-domain community. If you use any resouces or tools from this academic project,
+please cite us and the code used therein. 
 
-https://docs.readthedocs.io/en/stable/tutorial/
