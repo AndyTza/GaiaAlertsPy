@@ -7,9 +7,10 @@ Welcome to GaiaAlertsPy documentation!
 Check out the :doc:`usage` section for further information, including
 how to :ref:`installation` the project.
 
-.. note::
+.. attention::
 
-   This project is under active development.
+   This project is under active development by Andy Tzanidakis_ (UW)
+      .. _AndyTzanidakis: mailto:atzanida@uw.edu
 
 Contents
 --------
