@@ -12,7 +12,6 @@ project = "GaiaAlertPy"
 copyright = "2022, GaiaAlertsPy"
 author = "Anastasios Tzanidakis"
 
-
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be

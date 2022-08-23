@@ -2,6 +2,14 @@ GaiaAlertsPy
 =======================================
 
 
+
+
+Getting Started
+=======================================
+
+Say you want to query the light curve, 
+>>> import GaiaAlertsPy as gpy
+
 Aknowledgements
 =======================================
 This repository was inspired by the use of original repository GaiaAlerts_ (Hogg & Sipőcz) and extending its application to the time-domain community. If you use any resouces or tools from this academic project,
