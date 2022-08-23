@@ -36,7 +36,6 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # hide input prompts in notebooks
 nbsphinx_prompt_width = "0"
 
-
 #Theme
 html_theme = "furo"
 
