@@ -19,8 +19,8 @@ Contents
    :maxdepth: 1
    :caption: Contents:
 
-   install
-   getting-started
+   installation
+   usage
    citation
 
 .. _Gaia: https://www.cosmos.esa.int/web/gaia/home
