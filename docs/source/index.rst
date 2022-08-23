@@ -16,7 +16,11 @@ Contents
 --------
 
 .. toctree::
+   :maxdepth: 1
+   :caption: Contents:
 
-   usage
-   started
+   install
+   getting-started
    citation
+
+.. _Gaia: https://www.cosmos.esa.int/web/gaia/home
