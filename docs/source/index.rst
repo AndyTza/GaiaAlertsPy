@@ -19,7 +19,6 @@ Contents
    :maxdepth: 1
    :caption: Contents:
 
-   installation
    usage
-   
+
 .. _Gaia: https://www.cosmos.esa.int/web/gaia/home
