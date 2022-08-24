@@ -17,7 +17,7 @@ class GaiaAlert:
         self.id = id
 
     @property
-    def gaia_g_noise(self, mag):
+    def gaia_g_noise_esitmate(self, mag):
         """TODO: Source & logistics"""
         return 3.43779 - (mag/1.13759) + (mag/3.44123)**2 - (mag/6.51996)**3 + (mag/11.45922)**4
 
@@ -46,5 +46,5 @@ class GaiaAlert:
 
         return Table([master_frame[:,0][indx_nans], 
                     master_frame[:,1][indx_nans], 
-                    gaia_g_noise(master_frame[:,1][indx_nans])], 
+                    gaia_g_noise_esitmate(master_frame[:,1][indx_nans])], 
                     names=("mjd", "mag_G", "mag_G_error")) 
