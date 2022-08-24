@@ -18,7 +18,7 @@ except Exception:
 """.lstrip()
 
 setup(
-    use_scm_version={'write_to': os.path.join('GaiaAlertsPy', 'version.py'),
+    use_scm_version={'write_to': os.path.join('GaiaAlertsPy', 'history.py'),
                      'write_to_template': VERSION_TEMPLATE},
 
 )
