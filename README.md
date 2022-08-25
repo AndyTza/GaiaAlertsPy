@@ -1,23 +1,24 @@
 GaiaAlertsPy
 =======================================
-
+Welcome to `GaiaAlertsPy` a small python package for scraping photometric alerts from the ESA *Gaia* mission. 
 
 
 
 Quick-start Tutorial
 =======================================
 
-Let's query the alers 
-```
+Start by querying the epochal photometric alerts for Gaia19asz. 
+
+```python
 import GaiaAlertsPy as gappy
 
-
-
+target_id = "Gaia19asz"
+alert_lc = gaap.GaiaAlert(target_id).query_lightcurve_alert()
 ```
 
 Aknowledgements
 =======================================
-This repository was inspired by the use of original repository (GaiaAlerts)[https://github.com/davidwhogg/GaiaAlerts] (Hogg & Sipőcz) and extending its application to the time-domain community. If you use any resouces or tools from this academic project, please cite us and the code used therein. 
+This repository was inspired by the use of original repository [GaiaAlerts](https://github.com/davidwhogg/GaiaAlerts) (Hogg & Sipőcz) and extending its application to the time-domain community. If you use any resouces or tools from this academic project, please cite us and the code used therein. 
 
 
 
