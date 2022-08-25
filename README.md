@@ -10,7 +10,7 @@ You can install GaiaAlertsPy using directly `pip`:
 pip install GaiaAlertsPy
 ```
 or install the source directly from the respository:
-``` shell
+```shell
 pip install git+ssh://git@github.com/AndyTza/GaiaAlertsPy.git
 ```
 
