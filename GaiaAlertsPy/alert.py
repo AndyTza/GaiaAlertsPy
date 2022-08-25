@@ -9,7 +9,12 @@ import matplotlib
 import re
 import astropy.utils.data as dt
 import requests
-from bs4 import BeautifulSoup
+import os
+import ast
+import bs4
+import sys
+import warnings
+from astropy.table import Table, hstack, vstack
 
 
 base_url = "https://gsaweb.ast.cam.ac.uk/alerts/alert/"
@@ -26,50 +31,39 @@ class GaiaAlert:
         return 3.43779 - (mag/1.13759) + (mag/3.44123)**2 - (mag/6.51996)**3 + (mag/11.45922)**4
 
     def query_bprp_history(self):
+        """ Query BP and RP spectra for each epochal alert.  TODO: Finish docs!
+
+        This function was taken directly from (Sipőcz & Hogg):
+            https://github.com/davidwhogg/GaiaAlerts/blob/master/scripts/scrape_spectra.py
+
+        Args:
+            name (_type_): _description_
+
+        Returns:
+            _type_: _description_
         """
-        Will return the historic BP_RP of each alert!
 
-        This code was used directly from Hogg & Sipőcz 
+        content = aud.get_file_contents("{}/{}".format(baseurl, self.id), cache=True)
+        htmldoc = bs4.BeautifulSoup(content, 'html5lib')
 
-        TODO: Add docs
-        """
+        search_text = re.compile('var spectra')
+        line = htmldoc.find('script', text=search_text)
 
-        # Scrape images
-        htmllines = dt.get_file_contents(base_url + self.id).splitlines()
-        
-        # Scrape spectra!
-        for line in htmllines:
-            if "var spectra" in line:
-                break
-        
-        literal = re.sub("^.*= ", "data = ", line)
-        literal = re.sub("];.*$", "]", literal)
-        exec(literal)
+        try:
+            spectra_data = line.string.split('=')[1].strip()
+        except AttributeError:
+            warnings.warn("data is not found for {}, check whether it's a "
+                        "valid GaiaAlerts object".format(self.id))
+            return None
 
+        spectra_data = Table(ast.literal_eval(spectra_data[1:-2]))
 
-        # Let's extrapolate the spectra index and MJD 
-        page = request.get(base_url + self.id)
-        soup = BeautifulSoup(page.content, "html.parser")
+        spectra_meta = Table.read(content, format='ascii.html')
+        spectra = hstack([spectra_meta, spectra_data], join_type='outer')
 
-        mydivs = soup.find_all("div", {"class": "spectra_table scroll"})
+        spectra['Name'] = self.id
 
-        spec_index, spec_date = [], []
-        for line in mydivs[0].decode_contents().strip().split('\n'):
-            hd = line.split('<tr class="spectrum"')
-            fs = line.split('<td')
-            
-            if len(hd)>1:
-                s_indx = hd[1].split('id-spectrum')[1].split('"')[1]
-                spec_index.append(int(s_indx))
-            
-            if len(fs)>1:
-                if len(fs[1].split("-"))>2:
-                    date = fs[1].split(">")[1].split("</td")[0]
-                    spec_date.append(date)
-
-        data_table = Table(data)
-        return data_table.add_columns([spec_index, Time(spec_date).mjd],
-         names=("spec_index", "mjd"))
+        return spectra 
         
 
     def query_lightcurve_alert(self):
