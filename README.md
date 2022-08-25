@@ -3,6 +3,13 @@ GaiaAlertsPy
 Welcome to `GaiaAlertsPy` a small python package for scraping photometric alerts from the ESA *Gaia* mission. 
 
 
+Installation 
+==============
+You can install GaiaAlertsPy using directly `pip`:
+```pip install GaiaAlertsPy```
+or install the source directly from the respository:
+``` pip install git+ssh://git@github.com/AndyTza/GaiaAlertsPy.git```
+
 
 Quick-start Tutorial
 =======================================
