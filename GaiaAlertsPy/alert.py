@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib 
 import re
-import astropy.utils.data as dt
+import astropy.utils.data as aud
 import requests
 import os
 import ast
@@ -43,7 +43,7 @@ class GaiaAlert:
             _type_: _description_
         """
 
-        content = aud.get_file_contents("{}/{}".format(baseurl, self.id), cache=True)
+        content = aud.get_file_contents("{}/{}".format(base_url, self.id), cache=True)
         htmldoc = bs4.BeautifulSoup(content, 'html5lib')
 
         search_text = re.compile('var spectra')
@@ -72,14 +72,14 @@ class GaiaAlert:
         """
 
         try:
-            _dat = pd.read_csv(f"http://gsaweb.ast.cam.ac.uk/alerts/alert/{self.id}/lightcurve.csv/", skiprows=1)
+            _dat = pd.read_csv(f"{base_url}{self.id}/lightcurve.csv/", skiprows=1)
         except:
             raise ValueError("Sorry, the Gaia alert ID you queried was not found.") 
 
         master_frame = np.zeros(shape=(_dat.shape[0], 3))
         
         for i, vals in enumerate(_dat.to_numpy()):
-            time_conv = Time(vals[0], format='iso').mjd
+            time_conv = Time(vals[0], format='iso', scale='tcb').jd
             master_frame[i,0] = time_conv
 
             if vals[-1]=='untrusted' or vals[-1]=='nan':
@@ -92,4 +92,4 @@ class GaiaAlert:
         return Table([master_frame[:,0][indx_nans], 
                     master_frame[:,1][indx_nans], 
                     self.gaia_g_noise_esitmate(master_frame[:,1][indx_nans])], 
-                    names=("mjd", "mag_G", "mag_G_error")) 
+                    names=("JD", "mag_G", "mag_G_error")) 
