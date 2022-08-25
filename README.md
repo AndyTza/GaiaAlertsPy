@@ -1,6 +1,6 @@
 GaiaAlertsPy
 =======================================
-Welcome to `GaiaAlertsPy` a small python package for scraping photometric alerts from the ESA *Gaia* mission. 
+Welcome to `GaiaAlertsPy` a small python package for scraping photometric alerts from the [ESA Gaia Photometric Science Alerts](https://gsaweb.ast.cam.ac.uk/alerts). 
 
 
 Installation 
