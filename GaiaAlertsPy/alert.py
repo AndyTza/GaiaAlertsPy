@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 import pandas as pd
 import warnings
 from astropy.time import Time
@@ -5,6 +6,10 @@ from astropy.table import Table
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib 
+import re
+import astropy.utils.data as dt
+import requests
+from bs4 import BeautifulSoup
 
 
 base_url = "https://gsaweb.ast.cam.ac.uk/alerts/alert/"
@@ -20,8 +25,54 @@ class GaiaAlert:
         """TODO: Source & logistics"""
         return 3.43779 - (mag/1.13759) + (mag/3.44123)**2 - (mag/6.51996)**3 + (mag/11.45922)**4
 
-    
-    def query_lightcurve(self):
+    def query_bprp_history(self):
+        """
+        Will return the historic BP_RP of each alert!
+
+        This code was used directly from Hogg & Sipőcz 
+
+        TODO: Add docs
+        """
+
+        # Scrape images
+        htmllines = dt.get_file_contents(base_url + self.id).splitlines()
+        
+        # Scrape spectra!
+        for line in htmllines:
+            if "var spectra" in line:
+                break
+        
+        literal = re.sub("^.*= ", "data = ", line)
+        literal = re.sub("];.*$", "]", literal)
+        exec(literal)
+
+
+        # Let's extrapolate the spectra index and MJD 
+        page = request.get(base_url + self.id)
+        soup = BeautifulSoup(page.content, "html.parser")
+
+        mydivs = soup.find_all("div", {"class": "spectra_table scroll"})
+
+        spec_index, spec_date = [], []
+        for line in mydivs[0].decode_contents().strip().split('\n'):
+            hd = line.split('<tr class="spectrum"')
+            fs = line.split('<td')
+            
+            if len(hd)>1:
+                s_indx = hd[1].split('id-spectrum')[1].split('"')[1]
+                spec_index.append(int(s_indx))
+            
+            if len(fs)>1:
+                if len(fs[1].split("-"))>2:
+                    date = fs[1].split(">")[1].split("</td")[0]
+                    spec_date.append(date)
+
+        data_table = Table(data)
+        return data_table.add_columns([spec_index, Time(spec_date).mjd],
+         names=("spec_index", "mjd"))
+        
+
+    def query_lightcurve_alert(self):
         """
         TODO: Add docs
         """
