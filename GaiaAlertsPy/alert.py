@@ -35,6 +35,7 @@ class GaiaAlert:
 
         This function was taken directly from (Sipőcz & Hogg):
             https://github.com/davidwhogg/GaiaAlerts/blob/master/scripts/scrape_spectra.py
+            IMPORTANT: If you use this feature, please ensure to cite their initial work. 
 
         Args:
             name (_type_): _description_
