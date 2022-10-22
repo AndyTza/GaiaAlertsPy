@@ -30,6 +30,3 @@ alert_lc = gappy.GaiaAlert(target_id).query_lightcurve_alert()
 Acknowledgments
 =======================================
 This repository was inspired by the use of the original repository [GaiaAlerts](https://github.com/davidwhogg/GaiaAlerts) (Hogg & Sipőcz) and extending its application to the time-domain community. If you use any resources or tools from this project, please cite us and the code used therein. 
-
-
-

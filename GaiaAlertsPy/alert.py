@@ -5,6 +5,8 @@ from astropy.time import Time
 from astropy.table import Table
 import numpy as np
 import matplotlib.pyplot as plt
+from astropy.coordinates import SkyCoord
+import astropy.units as u
 import matplotlib 
 import re
 import astropy.utils.data as aud
@@ -21,6 +23,39 @@ base_url = "https://gsaweb.ast.cam.ac.uk/alerts/alert/"
 
 __all__ = [ 'query_lightcurve']
 
+
+class GaiaAlertsTable:
+    def __init__(self, ra, dec):
+        self.ra = ra
+        self.dec = dec
+        
+    def all_sources(self):
+        """Return astropy.Table of all Gaia Photometric Alerts to-date.
+
+        Returns:
+            astropy.Table: all Gaia Photometric Alerts to-date
+        """
+        return ascii.read("http://gsaweb.ast.cam.ac.uk/alerts/alerts.csv")
+    
+    def cone_search(self, sep=0.1):
+        """Cone search the Gaia Photometric alerts table. Return the closest crossmatch. 
+
+        Args:
+            sep (float, optional): Separation in arcseconds. Defaults to 0.1.
+
+        Returns:
+            astropy.Table: cone-searched Gaia Photometric Alerts at positio
+        """
+        master = self.all_sources()
+        
+        coord_target = SkyCoord(ra=self.ra*u.deg, dec=self.dec*u.deg, frame='icrs')
+        coords = SkyCoord(ra=master['RaDeg']*u.deg,
+                         dec=master['DecDeg']*u.deg, frame='icrs')
+        
+        sep_all = coords.separation(coord_target).arcsec
+        
+        return master[np.where(sep_all<=sep)]
+                
 
 class GaiaAlert:
     def __init__(self, id):
@@ -94,3 +129,8 @@ class GaiaAlert:
                     master_frame[:,1][indx_nans], 
                     self.gaia_g_noise_esitmate(master_frame[:,1][indx_nans])], 
                     names=("JD", "mag_G", "mag_G_error")) 
+
+
+
+
+                    
