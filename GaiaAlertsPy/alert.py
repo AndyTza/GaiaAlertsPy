@@ -3,6 +3,7 @@ import pandas as pd
 import warnings
 from astropy.time import Time
 from astropy.table import Table
+from astropy.io import ascii
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.coordinates import SkyCoord
@@ -24,19 +25,25 @@ base_url = "https://gsaweb.ast.cam.ac.uk/alerts/alert/"
 __all__ = [ 'query_lightcurve']
 
 
+def all_sources():
+    """Return astropy.Table of all Gaia Photometric Alerts to-date.
+
+    Returns:
+        astropy.Table: all Gaia Photometric Alerts to-date
+    """
+    return ascii.read("http://gsaweb.ast.cam.ac.uk/alerts/alerts.csv")
+    
+
 class GaiaAlertsTable:
     def __init__(self, ra, dec):
+        """
+        Args:
+            ra (float): RA in degs
+            dec (float): DEC in degs
+        """
         self.ra = ra
         self.dec = dec
         
-    def all_sources(self):
-        """Return astropy.Table of all Gaia Photometric Alerts to-date.
-
-        Returns:
-            astropy.Table: all Gaia Photometric Alerts to-date
-        """
-        return ascii.read("http://gsaweb.ast.cam.ac.uk/alerts/alerts.csv")
-    
     def cone_search(self, sep=0.1):
         """Cone search the Gaia Photometric alerts table. Return the closest crossmatch. 
 
@@ -46,7 +53,7 @@ class GaiaAlertsTable:
         Returns:
             astropy.Table: cone-searched Gaia Photometric Alerts at positio
         """
-        master = self.all_sources()
+        master = all_sources()
         
         coord_target = SkyCoord(ra=self.ra*u.deg, dec=self.dec*u.deg, frame='icrs')
         coords = SkyCoord(ra=master['RaDeg']*u.deg,
