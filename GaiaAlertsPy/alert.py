@@ -110,10 +110,6 @@ class GaiaAlert:
         
 
     def query_lightcurve_alert(self):
-        """
-        TODO: Add docs
-        """
-
         try:
             _dat = pd.read_csv(f"{base_url}{self.id}/lightcurve.csv/", skiprows=1)
         except:
@@ -136,6 +132,22 @@ class GaiaAlert:
                     master_frame[:,1][indx_nans], 
                     self.gaia_g_noise_esitmate(master_frame[:,1][indx_nans])], 
                     names=("JD", "mag_G", "mag_G_error")) 
+
+
+    def query_bprp_mags(self):
+        """pseudo- BP/RP magnitudes
+        """
+        # Fetch BPRP information table
+        color_lc = self.query_bprp_history()
+
+        # Take the sum of the ADU 
+        bp_adu, rp_adu = [rp_.sum() for rp_ in color_lc['rp']], [bp_.sum() for bp_ in color_lc['bp']]
+        zp_bp, zp_rp = 25.3514, 24.7619 # Table 5.2 (https://gea.esac.esa.int/archive/documentation/GDR2/Data_processing/chap_cu5pho/sec_cu5pho_calibr/ssec_cu5pho_calibr_extern.html)
+
+        bp_mag, rp_mag = -2.5*np.log10(bp_adu) + zp_bp , -2.5*np.log10(rp_adu) + zp_rp
+
+        return Table([color_lc['JD'], bp_mag, rp_mag], names=('JD', 'bp_mag', 'rp_mag'))
+
 
 
 

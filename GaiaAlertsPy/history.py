@@ -5,4 +5,4 @@ try:
     from setuptools_scm import get_version
     __version__ = get_version(root='..', relative_to=__file__)
 except Exception:
-    __version__ = '0.1.dev59+g4686fa2.d20221022'
+    __version__ = '0.1.dev62+ge0ce970.d20221023'
