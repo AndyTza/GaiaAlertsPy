@@ -12,7 +12,7 @@ To use GaiaAlertsPy, first install it using pip:
 
    pip install GaiaAlertsPy
 
-Alternativelyt, you can clone and install the most recent version of GaiaAlertsPy:
+Alternatively, you can clone and install the most recent version of GaiaAlertsPy:
 
 .. coode-block:: console
 
