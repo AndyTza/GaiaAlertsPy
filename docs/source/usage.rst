@@ -7,9 +7,7 @@ Installation
 ------------
 
 To use GaiaAlertsPy, first install it using pip:
-
 .. code-block:: console
-
    pip install GaiaAlertsPy
 
 Alternatively, you can clone and install the most recent version of GaiaAlertsPy. First start by cloning the most recent version from GitHub:
