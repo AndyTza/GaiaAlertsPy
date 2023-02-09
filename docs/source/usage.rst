@@ -13,7 +13,6 @@ Alternatively, you can clone and install the most recent version of GaiaAlertsPy
    git clone https://github.com/AndyTza/GaiaAlertsPy.git
 
 Next, change directory: 
-
    cd GaiaAlertsPy
 
 Finally, run the `setup.py` file: 
