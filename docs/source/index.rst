@@ -1,15 +1,19 @@
-Welcome to GaiaAlertsPy documentation!
+Welcome to GaiaAlertsPy
 ===================================
 
 **GaiaAlertsPy** is a Python library for querying alerts from the Gaia Photometric Science Alerts Program. 
 
 
-Check out the :doc:`usage` section for further information, including
-how to :ref:`installation` the project.
+Installation
+------------
+The package can be installed via pip:
+```pip install GaiaAlertsPy```
+
+For more details, please see the Installation section in the `Getting Started`_ guide.
 
 .. attention::
 
-   This project is under active development by Andy Tzanidakis_ (UW)
+   This project is under active development by Andy Tzanidakis (UW)
       .. _AndyTzanidakis: mailto:atzanida@uw.edu
 
 Contents
