@@ -2,7 +2,7 @@ GaiaAlertsPy
 =======================================
 Welcome to `GaiaAlertsPy` a small python package for data-mining photometric alerts from the [ESA Gaia Photometric Science Alerts](https://gsaweb.ast.cam.ac.uk/alerts). 
 
-
+Test
 Installation 
 ==============
 You can install GaiaAlertsPy using directly `pip`:
