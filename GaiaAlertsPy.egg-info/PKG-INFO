@@ -1,0 +1,32 @@
+Metadata-Version: 2.1
+Name: GaiaAlertsPy
+Version: 0.1.0
+Summary: Fetch Gaia Photometric Science Alerts
+Home-page: https://github.com/AndyTza/GaiaAlertsPy
+Author: Andy Tzanidakis
+Author-email: atzanida@uw.edu
+License: BSD-3-Clause
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Requires-Python: >=3.5
+License-File: licenses/LICENSE.rst
+Requires-Dist: astropy
+Requires-Dist: numpy
+Provides-Extra: all
+Provides-Extra: test
+Requires-Dist: pytest; extra == "test"
+Requires-Dist: pytest-doctestplus; extra == "test"
+Requires-Dist: pytest-cov; extra == "test"
+Requires-Dist: pytest-remotedata; extra == "test"
+Provides-Extra: docs
+Requires-Dist: sphinx; extra == "docs"
+Requires-Dist: sphinx-automodapi; extra == "docs"
+Requires-Dist: matplotlib; extra == "docs"
+
+Fetch Gaia Photometric Science Alerts

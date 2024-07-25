@@ -35,7 +35,6 @@ def all_sources():
     
 
 class GaiaAlertsTable:
-    """Class to handle Gaia Photometric Alerts table."""
     def __init__(self, ra, dec):
         """
         Args:
@@ -46,15 +45,15 @@ class GaiaAlertsTable:
         self.dec = dec
         
     def cone_search(self, sep=0.1):
-        """Return astropy.Table of all Gaia Photometric Alerts within a cone search of radius separation.
+        """Cone search the Gaia Photometric alerts table. Return the closest crossmatch. 
 
-        Parameters:
-            sep (float): separation in arcseconds
-        
+        Args:
+            sep (float, optional): Separation in arcseconds. Defaults to 0.1.
+
         Returns:
-            astropy.Table: all Gaia Photometric Alerts within a cone search of radius.    
+            astropy.Table: cone-searched Gaia Photometric Alerts at positio
         """
-        master = all_sources() # load all sources
+        master = all_sources()
         
         coord_target = SkyCoord(ra=self.ra*u.deg, dec=self.dec*u.deg, frame='icrs')
         coords = SkyCoord(ra=master['RaDeg']*u.deg,
@@ -66,29 +65,25 @@ class GaiaAlertsTable:
                 
 
 class GaiaAlert:
-    """Class to handle Gaia Photometric Alerts.
-    """
     def __init__(self, id):
         self.id = id
 
     def gaia_g_noise_esitmate(self, mag):
-        """Compute the Gaia G-band noise estimate.
-        
-        Parameters:
-            mag (float): Gaia G-band magnitude.
-        
-        Returns:
-            float: Gaia G-band uncertainty.
-        """
-
+        """TODO: Source & logistics"""
         return 3.43779 - (mag/1.13759) + (mag/3.44123)**2 - (mag/6.51996)**3 + (mag/11.45922)**4
 
     def query_bprp_history(self):
-        """ Query BP and RP spectra for each epochal alert.
+        """ Query BP and RP spectra for each epochal alert.  TODO: Finish docs!
 
         This function was taken directly from (Sipőcz & Hogg):
             https://github.com/davidwhogg/GaiaAlerts/blob/master/scripts/scrape_spectra.py
             IMPORTANT: If you use this feature, please ensure to cite their initial work. 
+
+        Args:
+            name (_type_): _description_
+
+        Returns:
+            _type_: _description_
         """
 
         content = aud.get_file_contents("{}/{}".format(base_url, self.id), cache=True)
@@ -115,14 +110,6 @@ class GaiaAlert:
         
 
     def query_lightcurve_alert(self):
-        """Query the lightcurve of a Gaia alert.
-        
-        Parameters:
-            id (str): Gaia alert ID.
-        
-        Returns:
-            astropy.Table: lightcurve of a Gaia alert.
-        """
         try:
             _dat = pd.read_csv(f"{base_url}{self.id}/lightcurve.csv/", skiprows=1)
         except:
@@ -148,7 +135,7 @@ class GaiaAlert:
 
 
     def query_bprp_mags(self):
-        """ Query the BP and RP magnitudes of a Gaia alrts and does a quick estimate ont he BP and RP magnitudes.
+        """pseudo- BP/RP magnitudes
         """
         # Fetch BPRP information table
         color_lc = self.query_bprp_history()

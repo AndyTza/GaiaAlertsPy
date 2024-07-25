@@ -1,0 +1,15 @@
+astropy
+numpy
+
+[all]
+
+[docs]
+sphinx
+sphinx-automodapi
+matplotlib
+
+[test]
+pytest
+pytest-doctestplus
+pytest-cov
+pytest-remotedata
