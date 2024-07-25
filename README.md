@@ -24,7 +24,7 @@ pip install GaiaAlertsPy
 ```
 or install the source directly from the repository:
 ```shell
-pip install git+ssh://git@github.com/AndyTza/GaiaAlertsPy.git
+git clone https://github.com/AndyTza/GaiaAlertsPy.git
 cd GaiaAlertsPy
 python setup.py install
 ```
