@@ -1,0 +1,1 @@
+We note that the original wavelgnth-pixel solution from ESA Gaia is not provided as part of the Gaia Photometric Science Alerts. We have taken a rough estimate of the wavelength-pixel solution from Carrasco et al. 2021 (https://www.aanda.org/articles/aa/full_html/2021/08/aa41249-21/aa41249-21.html) Figure 3. For our calibrated work, we assume no AC field angle deviations. 

@@ -1,0 +1,14 @@
+sphinx
+sphinx-rtd-theme
+ipykernel
+nbsphinx
+sphinx_automodapi
+furo
+sphinx_copybutton
+numpy
+pandas
+astropy
+matplotlib
+jupyter
+nbsphinx
+pydata-sphinx-theme
