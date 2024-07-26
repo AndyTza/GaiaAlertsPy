@@ -20,8 +20,6 @@ file_path = "../WaveCalibFile/"
 bp_cal = ascii.read(file_path + "conv_bp.txt")
 rp_cal = ascii.read(file_path + "conv_rp.txt")
 
-
-
 def pixel_2_nm(px_val, wave='bp'):
     """Convert from gaia pixels to wavelength solution...aproximate"""
     w_bp = np.where((bp_cal['col1']>=10) & (bp_cal['col1']<=50))

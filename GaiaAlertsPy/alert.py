@@ -7,6 +7,7 @@ from astropy.io import ascii
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.coordinates import SkyCoord
+from astropy.stats import sigma_clip
 import astropy.units as u
 import matplotlib 
 import re
@@ -19,11 +20,10 @@ import sys
 import warnings
 from astropy.table import Table, hstack, vstack
 
-
+# base URL for Gaia Photometric Alerts
 base_url = "https://gsaweb.ast.cam.ac.uk/alerts/alert/"
 
 __all__ = [ 'query_lightcurve']
-
 
 def all_sources():
     """Return astropy.Table of all Gaia Photometric Alerts to-date.
@@ -31,10 +31,17 @@ def all_sources():
     Returns:
         astropy.Table: all Gaia Photometric Alerts to-date
     """
-    return ascii.read("http://gsaweb.ast.cam.ac.uk/alerts/alerts.csv")
+    
+    # Try to return the ascii of the alets within the first 20 seconds if not raise an error
+    try:
+        return ascii.read("http://gsaweb.ast.cam.ac.uk/alerts/alerts.csv")
+    except:
+        # if the query takes too long, timeout and say that the Gaia alerts server might be temporarily down
+        raise ValueError("Sorry, the Gaia alerts server might be temporarily down. Please try again later.")
     
 
 class GaiaAlertsTable:
+    # TODO: wip
     """Class to handle Gaia Photometric Alerts table."""
     def __init__(self, ra, dec):
         """
@@ -78,6 +85,9 @@ class GaiaAlert:
         
         Returns:
             float: Gaia G-band uncertainty.
+
+        Reference:
+            Hodgkin et al. 2021 (https://arxiv.org/abs/2106.00479). Valid for 13<Gmag<21.
         """
 
         return 3.43779 - (mag/1.13759) + (mag/3.44123)**2 - (mag/6.51996)**3 + (mag/11.45922)**4
