@@ -66,8 +66,7 @@ class GaiaAlertsTable:
                 
 
 class GaiaAlert:
-    """Class to handle Gaia Photometric Alerts.
-    """
+    """Class to handle Gaia Photometric Alerts."""
     def __init__(self, id):
         self.id = id
 
@@ -146,18 +145,31 @@ class GaiaAlert:
                     self.gaia_g_noise_esitmate(master_frame[:,1][indx_nans])], 
                     names=("JD", "mag_G", "mag_G_error")) 
 
-
-    def query_bprp_mags(self):
+    def query_bprp_mags(self, sigma_clip=5):
         """ Query the BP and RP magnitudes of a Gaia alrts and does a quick estimate ont he BP and RP magnitudes.
+
+        Parameters:
+            sigma_clip (int): sigma clipping value
+        
+        Returns:
+            astropy.Table: BP and RP magnitudes of a Gaia alert.
         """
         # Fetch BPRP information table
         color_lc = self.query_bprp_history()
 
-        # Take the sum of the ADU 
-        bp_adu, rp_adu = [rp_.sum() for rp_ in color_lc['rp']], [bp_.sum() for bp_ in color_lc['bp']]
-        zp_bp, zp_rp = 25.3514, 24.7619 # Table 5.2 (https://gea.esac.esa.int/archive/documentation/GDR2/Data_processing/chap_cu5pho/sec_cu5pho_calibr/ssec_cu5pho_calibr_extern.html)
+        # Instrumental zero-point values
+        zp_BP, zp_RP = 25.3514, 24.7619 # Table 5.2 (https://gea.esac.esa.int/archive/documentation/GDR2/Data_processing/chap_cu5pho/sec_cu5pho_calibr/ssec_cu5pho_calibr_extern.html)
 
-        bp_mag, rp_mag = -2.5*np.log10(bp_adu) + zp_bp , -2.5*np.log10(rp_adu) + zp_rp
+        bp_mag, rp_mag = [], []
+        for _lc in color_lc:
+            bp0, rp0 = _lc['bp'], _lc['rp']
+
+            # Count only positive ADU counts & apply 5-sigma clip (see Hodgkin et al. 2021; Section 3.6)
+            bp, rp = sigma_clip(bp0[bp0>0], sigma=sigma_clip), sigma_clip(rp0[rp0>0], sigma=sigma_clip)
+
+            # Convert total flux to magnitudes
+            bp_mag.append(-2.5*np.log10(bp.sum()) + zp_BP)
+            rp_mag.append(-2.5*np.log10(rp.sum()) + zp_RP)
 
         return Table([color_lc['JD'], bp_mag, rp_mag], names=('JD', 'bp_mag', 'rp_mag'))
 
