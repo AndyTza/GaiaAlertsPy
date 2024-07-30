@@ -2,23 +2,20 @@ from GaiaAlertsPy import alert as gaap
 from scipy.interpolate import interp1d
 import numpy as np
 from astropy.stats import sigma_clip
-import matplotlib.pyplot as plt
-from matplotlib import rcParams
 from astropy.time import Time
 from astropy.io import ascii
 import astropy.units as u
-from expecto import get_spectrum
-from tqdm import tqdm
 from PyAstronomy.pyasl import instrBroadGaussFast
 from scipy.interpolate import CubicSpline
-import extinction
+import os
+
 
 class GaiaSpectrumCalibrator:
     """Class to handle the calibration of Gaia BP and RP spectra."""
 
     def __init__(self, bp_calibration_file, rp_calibration_file):
-        self.bp_cal = ascii.read(bp_calibration_file) # TODO: rough calibration. Need to improve this.
-        self.rp_cal = ascii.read(rp_calibration_file) # TODO: rough calibration. Need to improve this.
+        self.bp_cal = ascii.read(os.path.join(f"{os.getcwd()}/other/WaveCalibFile/","conv_bp.txt")) # TODO: rough calibration. Need to improve this.
+        self.rp_cal = ascii.read(os.path.join(f"{os.getcwd()}/other/WaveCalibFile/","conv_bp.txt")) # TODO : rough calibration. Need to improve this.
 
     def pixel_to_nm(self, pixel_values, wave='bp'):
         """Convert pixel values to wavelength values using an approximate calibration.

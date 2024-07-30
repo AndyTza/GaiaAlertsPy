@@ -23,7 +23,7 @@ from astropy.table import Table, hstack, vstack
 # base URL for Gaia Photometric Alerts
 base_url = "https://gsaweb.ast.cam.ac.uk/alerts/alert/"
 
-__all__ = [ 'query_lightcurve']
+__all__ = ['query_lightcurve']
 
 def all_sources():
     """Return astropy.Table of all Gaia Photometric Alerts to-date.
