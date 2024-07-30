@@ -7,6 +7,7 @@ from astropy.io import ascii
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.coordinates import SkyCoord
+from astropy.stats import sigma_clip
 import astropy.units as u
 import matplotlib 
 import re
@@ -19,11 +20,10 @@ import sys
 import warnings
 from astropy.table import Table, hstack, vstack
 
-
+# base URL for Gaia Photometric Alerts
 base_url = "https://gsaweb.ast.cam.ac.uk/alerts/alert/"
 
 __all__ = [ 'query_lightcurve']
-
 
 def all_sources():
     """Return astropy.Table of all Gaia Photometric Alerts to-date.
@@ -31,10 +31,18 @@ def all_sources():
     Returns:
         astropy.Table: all Gaia Photometric Alerts to-date
     """
-    return ascii.read("http://gsaweb.ast.cam.ac.uk/alerts/alerts.csv")
+    
+    # Try to return the ascii of the alets within the first 20 seconds if not raise an error
+    try:
+        return ascii.read("http://gsaweb.ast.cam.ac.uk/alerts/alerts.csv")
+    except:
+        # if the query takes too long, timeout and say that the Gaia alerts server might be temporarily down
+        raise ValueError("Sorry, the Gaia alerts server might be temporarily down. Please try again later.")
     
 
 class GaiaAlertsTable:
+    # TODO: wip
+    """Class to handle Gaia Photometric Alerts table."""
     def __init__(self, ra, dec):
         """
         Args:
@@ -45,15 +53,15 @@ class GaiaAlertsTable:
         self.dec = dec
         
     def cone_search(self, sep=0.1):
-        """Cone search the Gaia Photometric alerts table. Return the closest crossmatch. 
+        """Return astropy.Table of all Gaia Photometric Alerts within a cone search of radius separation.
 
-        Args:
-            sep (float, optional): Separation in arcseconds. Defaults to 0.1.
-
+        Parameters:
+            sep (float): separation in arcseconds
+        
         Returns:
-            astropy.Table: cone-searched Gaia Photometric Alerts at positio
+            astropy.Table: all Gaia Photometric Alerts within a cone search of radius.    
         """
-        master = all_sources()
+        master = all_sources() # load all sources
         
         coord_target = SkyCoord(ra=self.ra*u.deg, dec=self.dec*u.deg, frame='icrs')
         coords = SkyCoord(ra=master['RaDeg']*u.deg,
@@ -65,25 +73,31 @@ class GaiaAlertsTable:
                 
 
 class GaiaAlert:
+    """Class to handle Gaia Photometric Alerts."""
     def __init__(self, id):
         self.id = id
 
     def gaia_g_noise_esitmate(self, mag):
-        """TODO: Source & logistics"""
+        """Compute the Gaia G-band noise estimate.
+        
+        Parameters:
+            mag (float): Gaia G-band magnitude.
+        
+        Returns:
+            float: Gaia G-band uncertainty.
+
+        Reference:
+            Hodgkin et al. 2021 (https://arxiv.org/abs/2106.00479). Valid for 13<Gmag<21.
+        """
+
         return 3.43779 - (mag/1.13759) + (mag/3.44123)**2 - (mag/6.51996)**3 + (mag/11.45922)**4
 
     def query_bprp_history(self):
-        """ Query BP and RP spectra for each epochal alert.  TODO: Finish docs!
+        """ Query BP and RP spectra for each epochal alert.
 
         This function was taken directly from (Sipőcz & Hogg):
             https://github.com/davidwhogg/GaiaAlerts/blob/master/scripts/scrape_spectra.py
             IMPORTANT: If you use this feature, please ensure to cite their initial work. 
-
-        Args:
-            name (_type_): _description_
-
-        Returns:
-            _type_: _description_
         """
 
         content = aud.get_file_contents("{}/{}".format(base_url, self.id), cache=True)
@@ -110,6 +124,14 @@ class GaiaAlert:
         
 
     def query_lightcurve_alert(self):
+        """Query the lightcurve of a Gaia alert.
+        
+        Parameters:
+            id (str): Gaia alert ID.
+        
+        Returns:
+            astropy.Table: lightcurve of a Gaia alert.
+        """
         try:
             _dat = pd.read_csv(f"{base_url}{self.id}/lightcurve.csv/", skiprows=1)
         except:
@@ -133,18 +155,31 @@ class GaiaAlert:
                     self.gaia_g_noise_esitmate(master_frame[:,1][indx_nans])], 
                     names=("JD", "mag_G", "mag_G_error")) 
 
+    def query_bprp_mags(self, sigma_clip=5):
+        """ Query the BP and RP magnitudes of a Gaia alrts and does a quick estimate ont he BP and RP magnitudes.
 
-    def query_bprp_mags(self):
-        """pseudo- BP/RP magnitudes
+        Parameters:
+            sigma_clip (int): sigma clipping value
+        
+        Returns:
+            astropy.Table: BP and RP magnitudes of a Gaia alert.
         """
         # Fetch BPRP information table
         color_lc = self.query_bprp_history()
 
-        # Take the sum of the ADU 
-        bp_adu, rp_adu = [rp_.sum() for rp_ in color_lc['rp']], [bp_.sum() for bp_ in color_lc['bp']]
-        zp_bp, zp_rp = 25.3514, 24.7619 # Table 5.2 (https://gea.esac.esa.int/archive/documentation/GDR2/Data_processing/chap_cu5pho/sec_cu5pho_calibr/ssec_cu5pho_calibr_extern.html)
+        # Instrumental zero-point values
+        zp_BP, zp_RP = 25.3514, 24.7619 # Table 5.2 (https://gea.esac.esa.int/archive/documentation/GDR2/Data_processing/chap_cu5pho/sec_cu5pho_calibr/ssec_cu5pho_calibr_extern.html)
 
-        bp_mag, rp_mag = -2.5*np.log10(bp_adu) + zp_bp , -2.5*np.log10(rp_adu) + zp_rp
+        bp_mag, rp_mag = [], []
+        for _lc in color_lc:
+            bp0, rp0 = _lc['bp'], _lc['rp']
+
+            # Count only positive ADU counts & apply 5-sigma clip (see Hodgkin et al. 2021; Section 3.6)
+            bp, rp = sigma_clip(bp0[bp0>0], sigma=sigma_clip), sigma_clip(rp0[rp0>0], sigma=sigma_clip)
+
+            # Convert total flux to magnitudes
+            bp_mag.append(-2.5*np.log10(bp.sum()) + zp_BP)
+            rp_mag.append(-2.5*np.log10(rp.sum()) + zp_RP)
 
         return Table([color_lc['JD'], bp_mag, rp_mag], names=('JD', 'bp_mag', 'rp_mag'))
 

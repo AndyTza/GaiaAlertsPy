@@ -1,7 +1,5 @@
 from GaiaAlertsPy import alert as gaap
-import matplotlib
 from scipy.interpolate import interp1d
-cm = matplotlib.cm.get_cmap("gnuplot")
 import numpy as np
 from astropy.stats import sigma_clip
 import matplotlib.pyplot as plt
@@ -15,42 +13,117 @@ from PyAstronomy.pyasl import instrBroadGaussFast
 from scipy.interpolate import CubicSpline
 import extinction
 
-# Define the wavelength-pixel calibration files
-file_path = "../WaveCalibFile/"
-bp_cal = ascii.read(file_path + "conv_bp.txt")
-rp_cal = ascii.read(file_path + "conv_rp.txt")
+class GaiaSpectrumCalibrator:
+    """Class to handle the calibration of Gaia BP and RP spectra."""
 
-def pixel_2_nm(px_val, wave='bp'):
-    """Convert from gaia pixels to wavelength solution...aproximate"""
-    w_bp = np.where((bp_cal['col1']>=10) & (bp_cal['col1']<=50))
-    w_rp = np.where((rp_cal['col1']>=10) & (rp_cal['col1']<=50))
+    def __init__(self, bp_calibration_file, rp_calibration_file):
+        self.bp_cal = ascii.read(bp_calibration_file) # TODO: rough calibration. Need to improve this.
+        self.rp_cal = ascii.read(rp_calibration_file) # TODO: rough calibration. Need to improve this.
 
-    model_bp = interp1d(bp_cal['col1'].data[w_bp], bp_cal['col2'].data[w_bp], kind='quadratic')
-    model_rp = interp1d(rp_cal['col1'].data[w_rp], rp_cal['col2'].data[w_rp], kind='quadratic')
-    
-    if wave=='bp':
-        return model_bp(px_val[::-1])
-    elif wave=='rp':
-        return model_rp(px_val)
+    def pixel_to_nm(self, pixel_values, wave='bp'):
+        """Convert pixel values to wavelength values using an approximate calibration.
 
-def spec_BPRP(bp_rp_spec, interpolation_style='quadratic', size=1_000):
+        Parameters:
+        ----------
+        pixel_values : array-like
+            Pixel values to be converted.
+        wave : str, optional
+            Spectral band to use for conversion ('bp' or 'rp'). Default is 'bp'.
 
-    _bp, _rp = bp_rp_spec
-    
-    # Spectrum stiching
-    pixel = np.arange(0, 60, step=1) # pixel size 
-    xc = np.where((pixel>=10) & (pixel<=50)) 
-    
-    x1, y1 = pixel_2_nm(pixel[xc], wave='bp'), _bp[xc]
-    x1c = x1<600
+        Returns:
+        -------
+        array-like
+            Wavelength values in nanometers.
+        """
+        if wave == 'bp':
+            calibration_data = self.bp_cal
+        elif wave == 'rp':
+            calibration_data = self.rp_cal
+        else:
+            raise ValueError("Invalid wave value. Choose 'bp' or 'rp'.")
 
-    x2, y2 = pixel_2_nm(pixel[xc], wave='rp'), _rp[xc]
-    x2c = np.where((x2>700) & (x2<1000))
-    
-    X, Y = np.concatenate([x1[x1c], x2[x2c]]), np.concatenate([y1[x1c], y2[x2c]])
+        valid_indices = np.where((calibration_data['col1'] >= 10) & (calibration_data['col1'] <= 50))
+        model = interp1d(calibration_data['col1'][valid_indices], calibration_data['col2'][valid_indices], kind='quadratic')
 
-    # Interpolate
-    sf = interp1d(X, Y, kind=interpolation_style)
-    sfx = np.linspace(min(X), max(X), size)
+        return model(pixel_values[::-1]) if wave == 'bp' else model(pixel_values)
 
-    return sf, sf(sfx)
+class XPStitch:
+    """Class to handle the stitching of Gaia BP and RP spectra."""
+
+    def __init__(self, bp_spectra, rp_spectra, interpolator='linear'):
+        """Initialize the XPStitch object."""
+        self.bp_spectra = bp_spectra
+        self.rp_spectra = rp_spectra
+        self.interpolator = interpolator
+        self.pixel_range = np.arange(0, 60, step=1)
+        self.calibrator = GaiaSpectrumCalibrator("../WaveCalibFile/conv_bp.txt", "../WaveCalibFile/conv_rp.txt")
+
+    def stitch_spectra(self, mode='both'):
+        """Stitch the BP and RP spectra together using scipy.interp1d.
+
+        Parameters:
+        ----------
+        mode : str, optional
+            Mode to use for stitching ('both' or 'rp_only'). Default is 'both (i.e BP and RP)
+
+        Returns:
+        -------
+        tuple
+            Interpolated spectrum function and the interpolated spectrum.
+        """
+
+        if mode == 'bp':
+            stitched_spectra = []
+            for bp_spectrum in self.bp_spectra:
+                bp_pixels = self.pixel_range[(self.pixel_range >= 10) & (self.pixel_range <= 50)]
+                bp_wavelengths = self.calibrator.pixel_to_nm(bp_pixels, wave='bp')
+
+                common_bp_wavelengths = bp_wavelengths < 600
+
+                wavelengths = bp_wavelengths[common_bp_wavelengths]
+                intensities = bp_spectrum[common_bp_wavelengths]
+
+                spectrum_function = interp1d(wavelengths, intensities, kind=self.interpolator)
+                interpolated_wavelengths = np.linspace(min(wavelengths), max(wavelengths), 1000)
+
+                stitched_spectra.append(spectrum_function(interpolated_wavelengths))
+
+            return stitched_spectra
+        elif mode == 'rp':
+            stitched_spectra = []
+            for rp_spectrum in self.rp_spectra:
+                rp_pixels = self.pixel_range[(self.pixel_range >= 10) & (self.pixel_range <= 50)]
+                rp_wavelengths = self.calibrator.pixel_to_nm(rp_pixels, wave='rp')
+
+                common_rp_wavelengths = (rp_wavelengths > 700) & (rp_wavelengths < 1000)
+
+                wavelengths = rp_wavelengths[common_rp_wavelengths]
+                intensities = rp_spectrum[common_rp_wavelengths]
+
+                spectrum_function = interp1d(wavelengths, intensities, kind=self.interpolator)
+                interpolated_wavelengths = np.linspace(min(wavelengths), max(wavelengths), 1000)
+
+                stitched_spectra.append(spectrum_function(interpolated_wavelengths))
+
+            return stitched_spectra
+        else:
+            stitched_spectra = []
+            for bp_spectrum, rp_spectrum in zip(self.bp_spectra, self.rp_spectra):
+                bp_pixels = self.pixel_range[(self.pixel_range >= 10) & (self.pixel_range <= 50)]
+                rp_pixels = self.pixel_range[(self.pixel_range >= 10) & (self.pixel_range <= 50)]
+
+                bp_wavelengths = self.calibrator.pixel_to_nm(bp_pixels, wave='bp')
+                rp_wavelengths = self.calibrator.pixel_to_nm(rp_pixels, wave='rp')
+
+                common_bp_wavelengths = bp_wavelengths < 600
+                common_rp_wavelengths = (rp_wavelengths > 700) & (rp_wavelengths < 1000)
+
+                wavelengths = np.concatenate([bp_wavelengths[common_bp_wavelengths], rp_wavelengths[common_rp_wavelengths]])
+                intensities = np.concatenate([bp_spectrum[common_bp_wavelengths], rp_spectrum[common_rp_wavelengths]])
+
+                spectrum_function = interp1d(wavelengths, intensities, kind=self.interpolator)
+                interpolated_wavelengths = np.linspace(min(wavelengths), max(wavelengths), 1000)
+
+                stitched_spectra.append(spectrum_function(interpolated_wavelengths))
+
+            return stitched_spectra

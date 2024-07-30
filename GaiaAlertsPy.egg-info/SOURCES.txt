@@ -1,3 +1,4 @@
+.DS_Store
 README.md
 readthedocs.yaml
 setup.cfg
@@ -13,6 +14,8 @@ GaiaAlertsPy.egg-info/dependency_links.txt
 GaiaAlertsPy.egg-info/not-zip-safe
 GaiaAlertsPy.egg-info/requires.txt
 GaiaAlertsPy.egg-info/top_level.txt
+dist/GaiaAlertsPy-0.1.0-py3-none-any.whl
+dist/gaiaalertspy-0.1.0.tar.gz
 docs/.DS_Store
 docs/.readthedocs.yaml
 docs/Cite.rst
