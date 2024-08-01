@@ -57,31 +57,6 @@ class XPStitch:
         -------
             tuple: (spectrum, interpolated spectrum)
         """
-
-        if mode=='bp':
-            # Spectrum stitching
-            pixel = self.pixel_range
-            xc = np.where((pixel >= 10) & (pixel <= 50))
-
-            x1, y1 = self.calibrator.pixel_to_nm(pixel[xc], wave='bp'), self.bp_spectra[xc]
-            x1c = x1 < 600
-
-            sf = interp1d(x1[x1c], y1[x1c], kind=self.interpolation_style)
-
-            return x1, sf(x1)
-        
-        if mode=='rp':
-            # Spectrum stitching
-            pixel = self.pixel_range
-            xc = np.where((pixel >= 60) & (pixel <= 60))
-
-            x2, y2 = self.calibrator.pixel_to_nm(pixel[xc], wave='rp'), self.rp_spectra[xc]
-            x2c = (x2 > 600) & (x2 < 1000)
-
-            sf = interp1d(x2[x2c], y2[x2c], kind=self.interpolation_style)
-
-            return x2, sf(x2)
-
         if mode=='both':
             _bp, _rp = self.bp_spectra, self.rp_spectra
         
@@ -99,5 +74,26 @@ class XPStitch:
 
             sf = interp1d(X, Y, kind=self.interpolation_style)
             sfx = np.linspace(min(X), max(X), 60)
+
+            return sfx, sf(sfx)
+        
+        elif mode=='bp':
+            _bp = self.rp_spectra
+
+            # Spectrum stitching
+            pixel = self.pixel_range
+            xc = np.where((pixel >= 10) & (pixel <= 50))
+            sf = interp1d(self.calibrator.pixel_to_nm(pixel[xc], wave='bp'), _bp[xc], kind=self.interpolation_style)
+            sfx = np.linspace(350, 668, 60)
+
+            return sfx, sf(sfx)
+        elif mode=='rp':
+            _rp = self.rp_spectra
+
+            # Spectrum stitching
+            pixel = self.pixel_range
+            xc = np.where((pixel >= 15) & (pixel <= 50))
+            sf = interp1d(self.calibrator.pixel_to_nm(pixel[xc], wave='rp'), _rp[xc], kind=self.interpolation_style)
+            sfx = np.linspace(668, 998, 60)
 
             return sfx, sf(sfx)
