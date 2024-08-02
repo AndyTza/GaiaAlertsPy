@@ -84,7 +84,7 @@ class XPStitch:
             pixel = self.pixel_range
             xc = np.where((pixel >= 10) & (pixel <= 50))
             sf = interp1d(self.calibrator.pixel_to_nm(pixel[xc], wave='bp'), _bp[xc], kind=self.interpolation_style)
-            sfx = np.linspace(350, 600, 60)
+            sfx = np.linspace(350, 668, 60)
 
             return sfx, sf(sfx)
         elif mode=='rp':
@@ -92,8 +92,8 @@ class XPStitch:
 
             # Spectrum stitching
             pixel = self.pixel_range
-            xc = np.where((pixel >= 70) & (pixel <= 110))
+            xc = np.where((pixel >= 15) & (pixel <= 50))
             sf = interp1d(self.calibrator.pixel_to_nm(pixel[xc], wave='rp'), _rp[xc], kind=self.interpolation_style)
-            sfx = np.linspace(600+1, 998, 60)
+            sfx = np.linspace(668, 998, 60)
 
             return sfx, sf(sfx)

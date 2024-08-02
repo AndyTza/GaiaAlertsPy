@@ -118,6 +118,7 @@ docs/_build/source/usage.html
 docs/_static/css/custom.css
 docs/source/.DS_Store
 docs/source/getting-started.ipynb
+docs/source/nominalXpSamplePositions_colsSimple_PUBISHED.csv
 docs/source/quick-start.ipynb
 docs/source/wip-xp-spec.ipynb
 docs/source/other/alerts.csv

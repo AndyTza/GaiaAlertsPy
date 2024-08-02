@@ -22,6 +22,7 @@ Do you want the Gaia DR3 ID's for the alerts? Please check out our crossmatch ta
    introduction
    source/quick-start
    source/getting-started
+   source/GaiaX-alerts
    Cite
 
 The data processing pipelines, survey description, and performance of the Gaia Photometric Science Alerts can be found in `Hodgkin et al. 2021 <https://ui.adsabs.harvard.edu/abs/2021A%26A...652A..76H/abstract>`_.

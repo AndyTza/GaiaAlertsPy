@@ -95,6 +95,16 @@ class GaiaAlert:
     def query_bprp_history(self):
         """ Query BP and RP spectra for each epochal alert.
 
+        Parameters:
+        ----------
+            id (str): Gaia alert ID.
+
+        Returns:
+        -------
+            astropy.Table: BP and RP spectra for each epochal alert.
+
+        Notes:
+        ------
         This function was taken directly from (Sipőcz & Hogg):
             https://github.com/davidwhogg/GaiaAlerts/blob/master/scripts/scrape_spectra.py
             IMPORTANT: If you use this feature, please ensure to cite their initial work. 
@@ -127,9 +137,11 @@ class GaiaAlert:
         """Query the lightcurve of a Gaia alert.
         
         Parameters:
+        ----------
             id (str): Gaia alert ID.
         
         Returns:
+        -------
             astropy.Table: lightcurve of a Gaia alert.
         """
         try:
@@ -159,9 +171,11 @@ class GaiaAlert:
         """ Query the BP and RP magnitudes of a Gaia alrts and does a quick estimate ont he BP and RP magnitudes.
 
         Parameters:
+        ----------
             sigma_clip (int): sigma clipping value
         
         Returns:
+        -------
             astropy.Table: BP and RP magnitudes of a Gaia alert.
         """
         # Fetch BPRP information table
@@ -183,8 +197,40 @@ class GaiaAlert:
 
         return Table([color_lc['JD'], bp_mag, rp_mag], names=('JD', 'bp_mag', 'rp_mag'))
 
+def GaiaX_history(year='2021'):
+    """Query the GaiaX alert history.
+
+    Parameters:
+    ----------
+        year (str): year of the GaiaX alert history. Default is '2021'.
+
+    Returns:
+    -------
+        astropy.Table: GaiaX alert history.
+    
+    Notes:
+    ------
+    These are all the alerts raised by the single field-of-view detector (1-FoV detector, see description in Kostrzewa-Rutkowska Z., et al., 2020).
+    """
+    base_url = "https://gsaweb.ast.cam.ac.uk/alerts/gaiax/"
+
+    return ascii.read(f"{base_url}/{year}")
 
 
+def GaiaX_alert(alert_id):
+    """Fetch the GaiaX alert information.
 
+    Parameters:
+    ----------
+        alert_id (str): GaiaX alert ID.
+    
+    Returns:
+    -------
+        astropy.Table: GaiaX alert information.
+    """
+    base_url = "https://gsaweb.ast.cam.ac.uk/alerts/gaiax/"
+    try:
+        return ascii.read(f"{base_url}/{alert_id}.csv")
+    except ValueError:
+        raise ValueError("Sorry, the GaiaX alert ID you queried was not found.")
 
-                    
