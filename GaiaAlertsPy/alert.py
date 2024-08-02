@@ -206,7 +206,7 @@ def GaiaX_history(year='2021'):
 
     Returns:
     -------
-        astropy.Table: GaiaX alert history.
+        astropy.Table: GaiaX history information.
     
     Notes:
     ------
