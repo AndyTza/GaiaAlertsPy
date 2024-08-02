@@ -7,7 +7,7 @@ from setuptools import setup
 
 setup(
     name='GaiaAlertsPy',
-    version='0.1.0',
+    version='0.1.1',
     author='Andy Tzanidakis',
     author_email='atzanida@uw.edu',
     description='Fetch Gaia Photometric Science Alerts',

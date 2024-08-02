@@ -72,10 +72,6 @@ GaiaAlertsPy.egg-info/dependency_links.txt
 GaiaAlertsPy.egg-info/not-zip-safe
 GaiaAlertsPy.egg-info/requires.txt
 GaiaAlertsPy.egg-info/top_level.txt
-dist/GaiaAlertsPy-0.1.0-py3-none-any.whl
-dist/GaiaAlertsPy-0.1.0-py3.8.egg
-dist/GaiaAlertsPy-0.1.0-py3.9.egg
-dist/gaiaalertspy-0.1.0.tar.gz
 docs/.DS_Store
 docs/.readthedocs.yaml
 docs/Cite.rst
@@ -117,6 +113,7 @@ docs/_build/source/started.html
 docs/_build/source/usage.html
 docs/_static/css/custom.css
 docs/source/.DS_Store
+docs/source/GaiaX-alerts.ipynb
 docs/source/getting-started.ipynb
 docs/source/nominalXpSamplePositions_colsSimple_PUBISHED.csv
 docs/source/quick-start.ipynb

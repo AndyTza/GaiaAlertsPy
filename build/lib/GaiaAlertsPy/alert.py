@@ -229,6 +229,8 @@ def GaiaX_alert(alert_id):
         astropy.Table: GaiaX alert information.
     """
     base_url = "https://gsaweb.ast.cam.ac.uk/alerts/gaiax/"
-
-    return ascii.read(f"{base_url}/{alert_id}")
+    try:
+        return ascii.read(f"{base_url}/{alert_id}.csv")
+    except ValueError:
+        raise ValueError("Sorry, the GaiaX alert ID you queried was not found.")
 
