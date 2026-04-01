@@ -36,7 +36,7 @@ Quick-start Tutorial
 Start by querying the epochal photometric alerts for Gaia19asz. 
 
 ```python
-import GaiaAlertsPy as gaap
+from GaiaAlertsPy import alert as gaap
 
 target_id = "Gaia19asz"
 alert_lc = gaap.GaiaAlert(target_id).query_lightcurve_alert()
